@@ -1,5 +1,9 @@
 A clean yt-dlp wrapper, coded by a beginner in C#. yt-dlp is already included in the package, so download the latest version and you should be good!
 
+## Appearance
+<img width="886" height="673" alt="ytdlp-wrapper" src="https://github.com/user-attachments/assets/fd12d203-960a-448f-8cf3-2039497bd2df" />
+
+
 ## Star History
 
 <a href="https://www.star-history.com/?repos=Hunyar08%2Fytdlp-wrapper&type=date&legend=top-left">
