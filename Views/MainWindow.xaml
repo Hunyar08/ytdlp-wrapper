@@ -54,7 +54,7 @@
             <TextBox Grid.Column="0"
                      Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
                      IsEnabled="{Binding IsDownloading, Converter={StaticResource BoolNeg}}"
-                     Tag="Paste a YouTube or any supported URL here…">
+                     Tag="  Paste a YouTube or any supported URL here…">
                 <TextBox.Style>
                     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                         <Style.Triggers>
@@ -97,8 +97,10 @@
                        VerticalAlignment="Center"/>
 
             <TextBox Grid.Column="2"
+                     x:Name="OutputFolderTextBox"
                      Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}"
-                     IsReadOnly="True"/>
+                     ToolTip="Type a folder path or click Browse…"
+                     LostFocus="OutputFolderTextBox_LostFocus"/>
 
             <Button Grid.Column="4" Content="Browse…"
                     Style="{StaticResource DefaultButton}"

@@ -1,6 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 using System.Windows;
 using YtDlpWPF.Models;
 using YtDlpWPF.Services;
@@ -11,6 +15,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly YtDlpService _service = new();
     private CancellationTokenSource? _cts;
+    private readonly string _historyFilePath;
 
     [ObservableProperty] private string _url          = string.Empty;
     [ObservableProperty] private string _outputFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
@@ -24,6 +29,10 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel()
     {
+        _historyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "YtDlpWPF", "history.json");
+        LoadHistory();
+        History.CollectionChanged += (_, __) => SaveHistory();
+
         _service.OnProgressLine    += line  => System.Windows.Application.Current.Dispatcher.Invoke(() => LogText += line + "\n");
         _service.OnProgressPercent += pct   => System.Windows.Application.Current.Dispatcher.Invoke(() => Progress = pct);
         _service.OnTitleFound      += title => System.Windows.Application.Current.Dispatcher.Invoke(() => StatusMessage = $"Downloading: {title}");
@@ -47,21 +56,25 @@ public partial class MainViewModel : ObservableObject
         };
         History.Insert(0, item);
 
+
         _cts = new CancellationTokenSource();
         var (success, error) = await _service.DownloadAsync(Url, OutputFolder, AudioOnly, _cts.Token);
 
         if (success)
         {
             Progress = 100; StatusMessage = "Done! ✓"; item.Status = "Done";
+            SaveHistory();
         }
         else if (_cts.IsCancellationRequested)
         {
             StatusMessage = "Cancelled."; item.Status = "Cancelled";
+            SaveHistory();
         }
         else
         {
             StatusMessage = "Error — see log."; item.Status = "Error";
             LogText += "ERROR: " + error + "\n";
+            SaveHistory();
         }
 
         IsDownloading = false;
@@ -69,4 +82,31 @@ public partial class MainViewModel : ObservableObject
 
     [RelayCommand]
     private void Cancel() => _cts?.Cancel();
+
+    private void SaveHistory()
+    {
+        try
+        {
+            var dir = Path.GetDirectoryName(_historyFilePath)!;
+            Directory.CreateDirectory(dir);
+            var list = History.ToList();
+            var json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(_historyFilePath, json);
+        }
+        catch { /* ignore */ }
+    }
+
+    private void LoadHistory()
+    {
+        try
+        {
+            if (!File.Exists(_historyFilePath)) return;
+            var json = File.ReadAllText(_historyFilePath);
+            var list = JsonSerializer.Deserialize<List<DownloadItem>>(json);
+            if (list == null) return;
+            foreach (var it in list)
+                History.Add(it);
+        }
+        catch { /* ignore */ }
+    }
 }
