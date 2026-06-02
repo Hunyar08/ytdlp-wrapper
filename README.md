@@ -1,4 +1,5 @@
 <img width="886" height="673" alt="ytdlp-wrapper" src="https://github.com/user-attachments/assets/fd12d203-960a-448f-8cf3-2039497bd2df" />
+
 ## A clean yt-dlp wrapper, coded by a beginner in C#.
 This utility allows you to use yt-dlp, an open-source cli tool that allows you to download videos and audios from Youtube, with a gui!
 - yt-dlp is already included in the package, so after downloading the latest release and executing YtDlpWPF.exe, you're all good! 
