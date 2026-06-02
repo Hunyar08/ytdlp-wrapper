@@ -1,1 +1,1 @@
-A clean yt-dlp wrapper, coded by a beginner in C#. You are unfortunately going to have to compile it yourself, but that leaves room for modification and ensures code legibility. After compiling, place yt-dlp into the folder with the compiled application with the _internal folder included. Run YtDlpWPF.exe after, and enjoy!
+A clean yt-dlp wrapper, coded by a beginner in C#. yt-dlp is already included in the package, so download the latest version and you should be good!
